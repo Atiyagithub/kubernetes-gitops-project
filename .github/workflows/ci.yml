@@ -1,0 +1,32 @@
+
+name: Kubernetes CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.31.0'
+
+      - name: Check Kubernetes YAML files
+        run: |
+          test -d manifests
+          find manifests -type f \( -name '*.yaml' -o -name '*.yml' \) | grep -q .
+
+      - name: Pipeline completed
+        run: echo "Kubernetes CI pipeline completed successfully"
